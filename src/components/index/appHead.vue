@@ -98,6 +98,7 @@
     right: 0;
     background: #f2f2f2;
     height: 1.966667rem /* 73.75/37.5 */;
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2);
     z-index: 9;
   }
   .nav_header .nav_header-bar {

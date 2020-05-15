@@ -6,7 +6,7 @@
       @click="chooseCell"
     >
       <div class="cellImg">
-        <img :src="obj.url" v-lazy="img"/>
+        <img :src="obj.url"/>
       </div>
       <div class="text">{{ obj.name }}</div>
     </div>

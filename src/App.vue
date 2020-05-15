@@ -25,5 +25,7 @@ export default {
   padding: 0;
   scrollbar-width: none; /*Firefox*/
   -ms-overflow-style: none; /*IE10+*/
+  font-family: Helvetica Neue,Tahoma,Arial,PingFangSC-Regular,Hiragino Sans GB,Microsoft Yahei,sans-serif;
 }
+
 </style>
