@@ -29,7 +29,12 @@ import mine_1 from "@/assets/mine_1.png";
 
 export default {
   name: "appFooter",
-  props: {},
+  props: {
+    index:{
+      type:Number,
+      default:0
+    }
+  },
   data() {
     return {
       footer: [
@@ -39,15 +44,34 @@ export default {
         { name: "购物车", url: car, url_1: car_1 },
         { name: "我的", url: mine, url_1: mine_1 }
       ],
-      index: 0
     };
   },
   methods: {
     chooseTab(i) {
-      this.index = i;
+      switch (i) {
+        case 0:
+          if (this.$route.path === "/") return;
+          this.$router.push({ path: "/" });
+          break;
+        case 1:
+          break;
+        case 2:
+          if (this.$route.path === "/product") return;
+          this.$router.push({ path: "/product" });
+          break;
+        case 3:
+          if (this.$route.path === "/login") return;
+          this.$router.push({ path: "/login" });
+          break;
+        case 4:
+          if (this.$route.path === "/user") return;
+          this.$router.push({ path: "/user" });
+          break;
+      }
     }
   },
-  mounted() {}
+  mounted() {},
+
 };
 </script>
 <style lang="" scoped>

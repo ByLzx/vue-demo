@@ -5,7 +5,7 @@
         <img :src="products.titleImg" />
       </div>
       <div class="proBox">
-        <div class="pro" v-for="(item, i) in products.products" :key="i">
+        <div class="pro" v-for="(item, i) in products.products" :key="i" @click="choosePro(item)">
           <product :products="item"></product>
         </div>
       </div>
@@ -68,8 +68,14 @@ export default {
   data() {
     return {};
   },
-  methods: {},
-  mounted() {}
+  methods: {
+    choosePro(item){
+      this.$emit('choosePro',item)
+    }
+  },
+  mounted() {
+    
+  }
 };
 </script>
 <style lang="" scoped>
