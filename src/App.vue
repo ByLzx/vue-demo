@@ -57,5 +57,6 @@ export default {
   -ms-overflow-style: none; /*IE10+*/
   font-family: Helvetica Neue, Tahoma, Arial, PingFangSC-Regular,
     Hiragino Sans GB, Microsoft Yahei, sans-serif;
+    scroll-behavior: smooth;
 }
 </style>

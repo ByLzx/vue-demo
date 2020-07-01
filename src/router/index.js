@@ -10,7 +10,7 @@ export default new Router({
       name: "index",
       component: resolve => require(["@/views/index/index"], resolve),
       meta:{
-        keepAlive:true
+        // keepAlive:true
       }
     },
     {

@@ -2,13 +2,17 @@
   <div id="proDetail">
     <div class="main">
       <Pheader></Pheader>
-      <div class="swipebox">
-        <back></back>
-        <swipe :list="obj.swipeList" :largePoint="false"></swipe>
+      <div class="swipebox" id="product">
+        <back :needMounting="true" :opcity="opcity"></back>
+        <swipe
+          :list="obj.swipeList"
+          :largePoint="false"
+          :hasOption="true"
+        ></swipe>
       </div>
       <price :detail="obj.price"></price>
       <div class="title">{{ obj.title }}</div>
-      <div class="info">{{ obj.info.detail }}</div>
+      <div class="info">{{ obj.info ? obj.info.detail : "" }}</div>
       <div class="infoImg">
         <div class="item" v-for="(item, i) in obj.config">
           <div class="pitem item_top">
@@ -18,16 +22,31 @@
           <div class="pitem item_bot">{{ item.info }}</div>
         </div>
       </div>
-      <div class="introduce">
+      <div class="introduce" id="remarks">
         <div class="i-main">
           <div class="i-title">为你推荐</div>
+          <div class="i-pro">
+            <div class="proitem" v-for="(item, i) in _intro" :key="i">
+              <div class="proimg"><img :src="item.img" /></div>
+              <div class="proname">{{ item.name }}</div>
+              <div class="proprice">￥{{ item.price }}起</div>
+            </div>
+          </div>
         </div>
       </div>
+      <div class="details" id="details">
+        <div class="title">详情</div>
+        <div class="imgs">
+          <img v-for="(item, i) in imgList" :key="i" :src="item" />
+        </div>
+      </div>
+      <div class="footer"></div>
     </div>
   </div>
 </template>
 <script>
 import { api } from "@/common/api";
+import imgList from "@/common/imgList";
 import swipe from "@/components/index/swipe";
 import back from "./components/back";
 import price from "./components/price";
@@ -43,78 +62,53 @@ export default {
   },
   data() {
     return {
-      obj: {
-        id: "c1",
-        swipeList: [
-          "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/e775ba2bc7941d4f7fcf06375dc7c85e.jpg",
-          "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/6b40616de6b7d021c530d18ea0611d53.jpg",
-          "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/b419f785a96aee951f0461bc72f51e5b.jpg",
-          "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/415ac1f96daf10c7c5ea8244a1c81336.jpg"
-        ],
-        price: {
-          isSeckill: true,
-          price: "4999",
-          sprice: "5699",
-          overTime: "2020-06-26 23:59:59"
-        },
-        title: 'Air 13.3" 2019款',
-        info: {
-          import: "小米笔记本520特惠！快来抢购吧！",
-          detail:
-            "酷睿i5处理器 / 轻薄全金属机身 / MX250独立显卡 / 9.5小时超长续航 / FHD全高清屏幕 / 指纹解锁 / 512GB固态硬盘 / 兼顾办公娱乐与轻薄的高性能笔记本"
-        },
-        config: [
-          {
-            img:
-              "https://i8.mifile.cn/b2c-mimall-media/f0c04e138bfed2b1ebb589de615236d1.png",
-            name: "Intel i5",
-            info: "CPU"
-          },
-          {
-            img:
-              "https://i8.mifile.cn/b2c-mimall-media/a9298b07c99ef966b063dea874624a71.png",
-            name: "独立显卡MX250",
-            info: "显卡类型"
-          },
-          {
-            img:
-              "https://i8.mifile.cn/b2c-mimall-media/c8ec0829241324e401744da627482560.png",
-            name: "大内存",
-            info: "8GB"
-          },
-          {
-            img:
-              "https://i8.mifile.cn/b2c-mimall-media/768819862203c438b713192f0134ada9.png",
-            name: "512GB",
-            info: "含固态硬盘"
-          },
-          {
-            img:
-              "https://i8.mifile.cn/b2c-mimall-media/86a3bd46cf4f7f19daa2c3250cf30604.png",
-            name: "中等屏幕",
-            info: "13.3英寸"
-          },
-          {
-            img:
-              "https://i8.mifile.cn/b2c-mimall-media/a5ab24dcb527e49f970f13b11e000ab1.png",
-            name: "全高清屏",
-            info: "屏幕分辨率"
-          },
-          {
-            img:
-              "https://i8.mifile.cn/b2c-mimall-media/0b4ea0fb21dde2f29df3c20de73539b9.png",
-            name: "待机时长",
-            info: ">8小时"
-          }
-        ]
-      }
+      introList: [],
+      compareHeight: 0,
+      opcity: 0,
+      obj: {},
+      imgList
     };
   },
-  methods: {},
+  methods: {
+    getIntro() {
+      this.$axios.post(api.proList, {}).then(res => {
+        if (res.data.length > 0) {
+          this.introList = JSON.parse(res.data);
+          console.log(this.introList);
+          let dom1 = document.getElementById("swipe");
+          let dom2 = document.getElementById("price");
+          let height =
+            parseInt(dom1.clientHeight) + parseInt(dom2.clientHeight);
+          this.compareHeight = height;
+          window.scrollTo(0, 0);
+        }
+      });
+    },
+    handlerScroll() {
+      let scrollTop =
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop;
+      let reduce =
+        (
+          (parseInt(this.compareHeight) - scrollTop) /
+          parseInt(this.compareHeight)
+        ).toFixed(2) * 100;
+      this.opcity = reduce;
+    }
+  },
   computed: {
-    ...mapState("index", ["proInfo"])
+    ...mapState("index", ["proInfo"]),
+    _intro() {
+      try {
+        return [...this.introList[0].products, ...this.introList[1].products];
+      } catch (error) {
+        return [];
+      }
+    }
   },
   mounted() {
+    window.addEventListener("scroll", this.handlerScroll);
     this.$axios
       .post(api.proDetail, { proId: this.proInfo.id || "" })
       .then(res => {
@@ -123,13 +117,15 @@ export default {
           this.obj = data;
         } catch (error) {}
       });
+    this.getIntro();
+    console.log(imgList, "imglist_______________");
   }
 };
 </script>
 <style lang="" scoped>
 #proDetail {
   box-sizing: border-box;
-  padding: 0;
+  padding: 0 0 50px 0;
   margin: 0;
   width: 100%;
   height: 100%;
@@ -181,6 +177,7 @@ export default {
   font-size: 0.346667rem /* 13/37.5 */;
   min-height: 1.497067rem /* 56.14/37.5 */;
   color: #3c3c3c;
+  padding-top: 10px;
 }
 .pitem {
   width: 100%;
@@ -209,27 +206,69 @@ export default {
 .introduce {
   width: 100%;
   background: #fff;
-  margin-top: .533333rem /* 20/37.5 */;
-  padding: .444453rem /* 16.667/37.5 */;
+  margin-top: 0.533333rem /* 20/37.5 */;
+  padding: 0.444453rem /* 16.667/37.5 */;
   box-sizing: border-box;
 }
-.i-main{
+.i-main {
   width: 100%;
   height: 100%;
   background-color: #fafafa;
   height: 5.3808rem /* 201.78/37.5 */;
   border-radius: 8px;
-  border:1px solid #e5e5e5;
-  border-right:none;
+  border: 1px solid #e5e5e5;
+  border-right: none;
 }
-.i-title{
-  width:100%;
+.i-title {
+  width: 100%;
   height: 41.66px;
-  border-bottom:1px solid #e5e5e5;  
-  color:#ff6700;
+  border-bottom: 1px solid #e5e5e5;
+  color: #ff6700;
   font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.i-pro {
+  width: 100%;
+  overflow-x: auto;
+  padding: 16.667px;
+  font-size: 12px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+.proitem {
+  width: 93.75px;
+  box-sizing: border-box;
+  text-align: center;
+  margin-right: 8.33px;
+}
+.proimg {
+  width: 85.41px;
+  height: 85.41px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.proimg img {
+  width: 97%;
+  height: 97%;
+}
+.proname {
+  margin-top: 10.417px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.proprice {
+  color: #ff6700;
+}
+.details img {
+  width: 100%;
 }
 </style>
